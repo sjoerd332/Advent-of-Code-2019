@@ -63,4 +63,62 @@ while(1)
   end
 end
 
-sum(planetToLevel)
+numberOfIndirectOrbits = sum(planetToLevel);
+
+% find shortest path between YOU and SAN
+for i = 1:size(listToPlanet,1)
+  for j =1:size(listToPlanet,2)
+    reorderedList((i-1)*3+j) = listToPlanet(i,j);
+  end
+end
+san = (regexp(reorderedList, 'SAN')-1)/3
+sanL = planetToLevel(san)
+you = (regexp(reorderedList, 'YOU')-1)/3
+youL = planetToLevel(you)
+##stairs(planetToLevel)
+
+% find relative position of san and you
+youBase = [];
+youLevel = 0;
+sanBase = [];
+sanLevel = 0;
+rightPosition = regexp(orbits,'\)YOU')+1;
+
+while(1)
+  leftPosition = regexp(orbits,['\)',orbits(rightPosition:rightPosition+2)]);
+  if(length(leftPosition) > 0)
+    leftPosition = leftPosition - 3;
+    youBase = [leftPosition,youBase];
+    rightPosition = leftPosition;
+    youLevel = youLevel +1;
+  else
+    break;
+  end  
+end
+rightPosition = regexp(orbits,'\)SAN')+1;
+while(1)
+  leftPosition = regexp(orbits,['\)',orbits(rightPosition:rightPosition+2)]);
+  if(length(leftPosition) > 0)
+    leftPosition = leftPosition - 3;
+    sanBase = [leftPosition,sanBase];
+    rightPosition = leftPosition;
+    sanLevel = sanLevel +1;
+  else
+    break;
+  end  
+end
+
+
+youLevel
+sanLevel
+
+% find latest common planet
+
+for i = 1:min(length(sanBase),length(youBase))
+  if(sanBase(i) != youBase(i))
+    latestCommon = i
+    break;
+  end
+end
+distance = (youLevel)-latestCommon + (sanLevel)-latestCommon
+
