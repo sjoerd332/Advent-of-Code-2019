@@ -1,11 +1,10 @@
-function [output,memory] = runIntCodeProcessor(memory,inputVar)
-currentInstructionAddress = 1;
+function [output,memory, haltCondition, currentInstructionAddress] = runIntCodeProcessor(memory,inputVar,currentInstructionAddress)
+##currentInstructionAddress = 1;
 currentInstruction = 0;
-
 output = [];
 outputCnt = 0;
 inputCnt  = 0;
-
+haltCondition = 0;
 %while(currentInstruction != 99)
 while(1)
   [p3 p2 p1 currentInstruction] = getInstruction(memory(currentInstructionAddress));
@@ -17,6 +16,10 @@ while(1)
     currentInstructionAddress += 4;
   elseif(currentInstruction == 3) % load input
     inputCnt +=1;
+    if(inputCnt > length(inputVar))
+      haltCondition = 3;
+      break;
+    end
     memory(memory(currentInstructionAddress+1)+1) = inputVar(inputCnt);
     currentInstructionAddress += 2;
   elseif(currentInstruction == 4) % load output
@@ -42,11 +45,13 @@ while(1)
     memory(memory(currentInstructionAddress+3)+1) = getParameterModeOutput(p1,memory(currentInstructionAddress+1),memory) == getParameterModeOutput(p2,memory(currentInstructionAddress+2),memory);
     currentInstructionAddress += 4;
   elseif(currentInstruction == 99)
+    haltCondition = 1;
     break;
   end
   
   if(currentInstructionAddress > length(memory))
     display('ERR: out of memory!');
+    haltCondition = 2;
     break;
   end;
 end
