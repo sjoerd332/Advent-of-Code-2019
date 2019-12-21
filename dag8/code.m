@@ -47,7 +47,7 @@ for k = 1:height
   end  
 end
 
-imshow(outputPicture);
+imshow(1-outputPicture);
 ##for i = 1:pixelsPerLayer
 ##  ansPart2(i) = num2str(outputPicture(i));
 ##end
