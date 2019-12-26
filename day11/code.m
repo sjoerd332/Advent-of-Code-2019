@@ -6,36 +6,14 @@ mem = [3,8,1005,8,324,1106,0,11,0,0,0,104,1,104,0,3,8,1002,8,-1,10,1001,10,1,10,
 mem = [mem, zeros(1,1150-length(mem))];
 proc.memory = mem;
 
-function outp = move(status,dir)
-    if(dir == 0)
-        outp(3) = status(3) + pi/2;
-    else
-        outp(3) = status(3) - pi/2;
-    end
-    outp(1) = status(1) + cos(outp(3));
-    outp(2) = status(2) + sin(outp(3));
-end
-
-function locationMap = updateLocationMap(locationMap,status)
-    % check current position
-    idx = 0;
-    for i = 1:size(locationMap,1)
-       if(locationMap(i,1) == status(1) && locationMap(i,2) == status(2))
-        idx = i;
-       end
-    end
-    % new location
-    if(idx > 0)
-       locationMap = [locationMap; status([1,2]),0];
-    else % known location, color update
-       locationMap(idx,3) = status(4);
-    end
-end
-
 % x,y,color
-locationMap = [0,0,0]; % x,y, color
 currentStep = 0;
-currentStatus = [0,0,1,0]; % x,y,orientation,color (0 right,1 up,2 left,3 down)
+% part 1 input
+%locationMap = [0,0,0]; % x,y, color
+%currentStatus = [0,0,1,0]; % x,y,orientation,color (0 right,1 up,2 left,3 down)
+% part 2 input
+locationMap = [0,0,1]; % x,y, color
+currentStatus = [0,0,1,1]; % x,y,orientation,color (0 right,1 up,2 left,3 down)
 idx = 1;
 while(proc.haltCondition != 1)
     currentStep +=1
@@ -51,12 +29,6 @@ while(proc.haltCondition != 1)
     dir = output(2);
     % update 
     % color current position, always a known position
-%    idx = 0;
-%    for i = 1:size(locationMap,1)
-%       if(abs(locationMap(i,1) - currentStatus(1)) < 1e-5 && abs(locationMap(i,2) - currentStatus(2)) < 1e-5)
-%        idx = i;
-%       end
-%    end
     locationMap(idx,3) = col;
     
     % current position status update
@@ -122,3 +94,10 @@ scatter(locationMap(:,1),locationMap(:,2),'+')
 %    end
 %    i
 %end
+ansPart1 = length(locationMap);
+
+im = zeros(50,50);
+for i = 1:length(locationMap)
+    im(locationMap(i,1)+1,locationMap(i,2)+10) = locationMap(i,3);
+end
+imshow(im);
