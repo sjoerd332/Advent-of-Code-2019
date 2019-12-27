@@ -19,6 +19,9 @@ pos = [ x=10, y=15, z=7;
         x=0, y=-3, z=13];
 vel = zeros(size(pos));
 
+initialPos = pos;
+initialVel = vel;
+
 simStepCounter =0;
 planetCount = [1,2,3,4];
 numberOfPlanets = 4;
@@ -41,3 +44,37 @@ while(simStepCounter < 1000)
 end
 
 ansPart1 = sum(Ekin .* Epot)
+
+% calculate x y z period separately
+for j = 1:3
+    equalToInitialCond = false;
+    simStepCounter = 0;
+    pos = initialPos; % should not be needed, coordinates independent
+    vel = initialVel;
+while(equalToInitialCond == false)
+    simStepCounter +=1;
+    % calc vel
+    for i = 1:numberOfPlanets
+%       for j = 3
+           positive = sum(pos(planetCount~=i,j) > pos(i,j));
+           equal    = sum(pos(planetCount~=i,j) == pos(i,j));
+           negative = sum(pos(planetCount~=i,j) < pos(i,j));
+           vel(i,j) += positive - negative;
+%       end
+    end
+    % calc pos
+    pos +=vel;
+    % calc energy
+%    Ekin = sum(abs(vel),2);
+%    Epot = sum(abs(pos),2);
+    
+    condPos = pos == initialPos;
+    condVel = vel == initialVel;
+    if(all(condPos(:)) && all(condVel(:)))
+        equalToInitialCond = true;
+    end
+end
+counts(j) = simStepCounter;
+end
+
+ansPart2 = lcm(lcm(counts(1),counts(2)),counts(3))
